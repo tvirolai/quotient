@@ -26,8 +26,6 @@
 
 ;;; Code:
 
-(require 'scratch-message)
-
 (defgroup quotient ()
   "Settings for Quotient."
   :group 'editing)
@@ -59,21 +57,24 @@
      (point-min)
      (point-max))))
 
-(defun quotient-read-corpus ()
-  "Read the corpus into memory, split into rows."
-  (let ((corpus-file-expanded (expand-file-name quotient-corpus user-emacs-directory)))
+(defun quotient-read-corpus (corpus)
+  "Read the CORPUS into memory, split into rows."
+  (let ((corpus-file-expanded (expand-file-name corpus user-emacs-directory)))
+    (message (concat "Reading corpus: " corpus-file-expanded))
     (if (file-exists-p corpus-file-expanded)
         (setq quotient-rows
-         (split-string
-          (quotient-slurp corpus-file-expanded) "\n" t))
+              (split-string
+               (quotient-slurp corpus-file-expanded) "\n" t))
       (message "Corpus file not found."))))
 
 (when quotient-corpus
-  (quotient-read-corpus))
+  (quotient-read-corpus quotient-corpus))
 
 (add-variable-watcher 'quotient-corpus
                       (lambda (symbol newval operation where)
-                        (quotient-read-corpus)))
+                        (message "Corpus updated!")
+                        (message (concat "New: " newval))
+                        (quotient-read-corpus newval)))
 
 ;;;###autoload
 (defun quotient-get-quote (rows)
@@ -101,14 +102,6 @@
   (message (quotient-generate-quote)))
 
 ;;;###autoload
-(defun quotient-set-scratch-message ()
-  "Generate a new quote and set it to the *scratch* buffer."
-  (interactive)
-  (setq initial-scratch-message "")
-  (let ((quote (quotient-generate-quote)))
-    (scratch-message-insert quote)))
-
-;;;###autoload
 (defun quotient-set-eshell-banner-message ()
   "Generate a new quote and set it to the eshell banner."
   (let ((props (text-properties-at 0 eshell-banner-message)))
@@ -121,6 +114,40 @@
 (defun quotient-as-comment (quote)
   "Comments out the QUOTE."
   (concat  ";; " (string-replace "\n" "\n;; " quote)))
+
+(defvar scratch-buffer-name "*scratch*")
+
+(setq next-line-add-newlines t)
+
+(defun quotient-wipe-scratch-message ()
+  "Remove existing scratch message, if any."
+  (when (get-buffer scratch-buffer-name)
+    (with-current-buffer scratch-buffer-name
+      (goto-char (point-min))
+      (let ((quote-char (cond ((eq major-mode 'lisp-interaction-mode) (char-from-name "SEMICOLON"))
+                              ((eq major-mode 'org-mode) ?#)
+                              (t ?/))))
+        (while (eq quote-char (char-after))
+          (forward-line))
+        (delete-region (point-min) (point))))))
+
+(defun quotient-scratch-message-insert (quote)
+  (when (get-buffer scratch-buffer-name)
+    (with-current-buffer scratch-buffer-name
+      (goto-char (point-min))
+      (insert (concat quote "\n"))
+      (goto-char (point-min))
+      (forward-line quotient-quote-length)
+      (comment-region (point-min) (point)))))
+
+;;;###autoload
+(defun quotient-set-scratch-message ()
+  "Generate a new quote and set it to the *scratch* buffer."
+  (interactive)
+  (save-excursion
+    (let ((quote (quotient-generate-quote)))
+      (quotient-wipe-scratch-message)
+      (quotient-scratch-message-insert quote))))
 
 (provide 'quotient)
 
