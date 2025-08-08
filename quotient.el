@@ -1,8 +1,8 @@
-;;; quotient.el --- A library for generating random quotes using a corpus -*- lexical-binding: t -*-
+;;; quotient.el --- A library for generating random quotes using a corpus. -*- lexical-binding: t -*-
 
-;; Copyright (C) 2025  Tuomo Virolainen
+;; Copyright (C) 2025 Tuomo Virolainen
 
-;; Author: Tuomo Virolainen <tvirolai@soittakaaparanoid.mail.kapsi.fi>
+;; Author: Tuomo Virolainen <tvirolai @ soittakaaparanoid.mail.kapsi.fi>
 
 ;; URL: https://github.com/tvirolai/quotient
 ;; Keywords: lisp
@@ -35,7 +35,7 @@
 ;; User settings.
 
 (defcustom quotient-corpus nil
-  "Path to your corpus file."
+  "Path to your corpus file, inside the Emacs directory."
   :type 'string
   :group 'quotient)
 
@@ -43,6 +43,13 @@
   "The length, in rows, of the quotes to generate."
   :type 'number
   :group 'quotient)
+
+;;
+
+(defvar quotient-quotes '())
+(defvar quotient-rows '()
+  "This holds the raw data read from the corpus.")
+(defvar quotient-current-quote nil)
 
 (defun quotient-slurp (file)
   "Read the contents of FILE."
@@ -52,6 +59,23 @@
      (point-min)
      (point-max))))
 
+(defun quotient-read-corpus ()
+  "Read the corpus into memory, split into rows."
+  (let ((corpus-file-expanded (expand-file-name quotient-corpus user-emacs-directory)))
+    (if (file-exists-p corpus-file-expanded)
+        (setq quotient-rows
+         (split-string
+          (quotient-slurp corpus-file-expanded) "\n" t))
+      (message "Corpus file not found."))))
+
+(when quotient-corpus
+  (quotient-read-corpus))
+
+(add-variable-watcher 'quotient-corpus
+                      (lambda (symbol newval operation where)
+                        (quotient-read-corpus)))
+
+;;;###autoload
 (defun quotient-get-quote (rows)
   "Generate and return a quote from ROWS."
   (let* ((count (length rows))
@@ -63,32 +87,41 @@
         (quotient-get-quote rows)
       (mapconcat 'identity res "\n"))))
 
+;;;###autoload
 (defun quotient-generate-quote ()
   "Generate and return a quote."
-  (let ((corpus-file-expanded (expand-file-name quotient-corpus user-emacs-directory)))
-    (if (file-exists-p corpus-file-expanded)
-        (quotient-get-quote
-         (split-string
-          (quotient-slurp corpus-file-expanded) "\n" t))
-      (message "Corpus file not found."))))
+  (if quotient-rows
+      (quotient-get-quote quotient-rows)
+    (message "Corpus file not found.")))
 
+;;;###autoload
 (defun quotient-display-random-quote ()
   "Generate a quote and view it in the minibuffer."
   (interactive)
   (message (quotient-generate-quote)))
 
+;;;###autoload
 (defun quotient-set-scratch-message ()
   "Generate a new quote and set it to the *scratch* buffer."
   (interactive)
-  (scratch-message-insert (quotient-generate-quote)))
+  (setq initial-scratch-message "")
+  (let ((quote (quotient-generate-quote)))
+    (scratch-message-insert quote)))
 
+;;;###autoload
 (defun quotient-set-eshell-banner-message ()
   "Generate a new quote and set it to the eshell banner."
-  (interactive)
   (let ((props (text-properties-at 0 eshell-banner-message)))
     (setq eshell-banner-message
           (propertize (concat (quotient-generate-quote) "\n\n")
                       'insert-in-front-hooks
                       (plist-get props 'insert-in-front-hooks)))))
+
+
+(defun quotient-as-comment (quote)
+  "Comments out the QUOTE."
+  (concat  ";; " (string-replace "\n" "\n;; " quote)))
+
+(provide 'quotient)
 
 ;;; quotient.el ends here

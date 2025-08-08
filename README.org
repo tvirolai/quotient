@@ -1,0 +1,31 @@
+* Quotient
+
+Quotient is a small package that generates random quotes from a corpus file and sets them on the top of the scratch buffer, as the eshell banner or just displays them in the minibuffer.
+
+** Installation
+
+Installation from MELPA (TODO!). An example using the =use-package= method:
+
+#+begin_src elisp
+(use-package quotient
+  :ensure t
+  :bind (("C-c ä" . quotient-set-scratch-message)) ;; Manually reset the scratch message
+  :init
+  (quotient-set-scratch-message)
+  (add-hook 'eshell-mode-hook 'quotient-reset-eshell-message)
+  :custom
+  (quotient-corpus "var/manowar.txt") ;; This needs to be under your Emacs directory.
+  (quotient-quote-length 4)) ;; The default)
+#+end_src
+
+** Usage
+
+Quotient exposes three interactive functions:
+
+| Function                           | Description                                            |
+|------------------------------------+--------------------------------------------------------|
+| =quotient-display-random-quote=      | Display a quote in the minibuffer.                     |
+| =quotient-set-scratch-message=       | Generate a new quote and set it to the *scratch* buffer. |
+| =quotient-set-eshell-banner-message= | Generate a new quote and set it to the eshell banner.  |
+
+There is also =quotient-generate-quote= which generates and returns a quote, in case you want to do this programmatically.
