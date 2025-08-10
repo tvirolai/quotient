@@ -14,7 +14,7 @@ Installation from MELPA (TODO!). An example using the =use-package= method:
   (quotient-set-scratch-message)
   (add-hook 'eshell-mode-hook 'quotient-reset-eshell-message)
   :custom
-  (quotient-corpus "var/manowar.txt") ;; This needs to be under your Emacs directory.
+  (quotient-corpus "etc/corpus.txt") ;; This needs to be under your Emacs directory.
   (quotient-quote-length 4)) ;; The default)
 #+end_src
 

@@ -42,12 +42,11 @@
   :type 'number
   :group 'quotient)
 
-;;
+;; Code
 
-(defvar quotient-quotes '())
-(defvar quotient-rows '()
-  "This holds the raw data read from the corpus.")
-(defvar quotient-current-quote nil)
+(defvar scratch-buffer-name "*scratch*")
+
+(setq next-line-add-newlines t)
 
 (defun quotient-slurp (file)
   "Read the contents of FILE."
@@ -60,23 +59,11 @@
 (defun quotient-read-corpus (corpus)
   "Read the CORPUS into memory, split into rows."
   (let ((corpus-file-expanded (expand-file-name corpus user-emacs-directory)))
-    (message (concat "Reading corpus: " corpus-file-expanded))
     (if (file-exists-p corpus-file-expanded)
-        (setq quotient-rows
-              (split-string
-               (quotient-slurp corpus-file-expanded) "\n" t))
+        (split-string
+         (quotient-slurp corpus-file-expanded) "\n" t)
       (message "Corpus file not found."))))
 
-(when quotient-corpus
-  (quotient-read-corpus quotient-corpus))
-
-(add-variable-watcher 'quotient-corpus
-                      (lambda (symbol newval operation where)
-                        (message "Corpus updated!")
-                        (message (concat "New: " newval))
-                        (quotient-read-corpus newval)))
-
-;;;###autoload
 (defun quotient-get-quote (rows)
   "Generate and return a quote from ROWS."
   (let* ((count (length rows))
@@ -89,10 +76,18 @@
       (mapconcat 'identity res "\n"))))
 
 ;;;###autoload
-(defun quotient-generate-quote ()
-  "Generate and return a quote."
-  (if quotient-rows
-      (quotient-get-quote quotient-rows)
+(defun quotient-generate-quote (&optional format)
+  "Generate and return a quote.
+Optional argument FORMAT can be `comment' (commented out with semicolons) or
+`eshell' (with two line breaks added)."
+  (if quotient-corpus
+      (let* ((rows (quotient-read-corpus quotient-corpus))
+             (quote (quotient-get-quote rows)))
+        (if format
+            (cond ((eq format 'comment) (concat  ";; " (string-replace "\n" "\n;; " quote)))
+                  ((eq format 'eshell) (concat quote "\n\n"))
+                  (t quote))
+          quote))
     (message "Corpus file not found.")))
 
 ;;;###autoload
@@ -100,24 +95,6 @@
   "Generate a quote and view it in the minibuffer."
   (interactive)
   (message (quotient-generate-quote)))
-
-;;;###autoload
-(defun quotient-set-eshell-banner-message ()
-  "Generate a new quote and set it to the eshell banner."
-  (let ((props (text-properties-at 0 eshell-banner-message)))
-    (setq eshell-banner-message
-          (propertize (concat (quotient-generate-quote) "\n\n")
-                      'insert-in-front-hooks
-                      (plist-get props 'insert-in-front-hooks)))))
-
-
-(defun quotient-as-comment (quote)
-  "Comments out the QUOTE."
-  (concat  ";; " (string-replace "\n" "\n;; " quote)))
-
-(defvar scratch-buffer-name "*scratch*")
-
-(setq next-line-add-newlines t)
 
 (defun quotient-wipe-scratch-message ()
   "Remove existing scratch message, if any."
@@ -132,6 +109,7 @@
         (delete-region (point-min) (point))))))
 
 (defun quotient-scratch-message-insert (quote)
+  "Insert QUOTE into the top of the scratch buffer."
   (when (get-buffer scratch-buffer-name)
     (with-current-buffer scratch-buffer-name
       (goto-char (point-min))
