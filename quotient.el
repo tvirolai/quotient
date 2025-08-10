@@ -1,13 +1,12 @@
-;;; quotient.el --- A library for generating random quotes using a corpus. -*- lexical-binding: t -*-
+;;; quotient.el --- A library for generating random quotes using a text corpus. -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2025 Tuomo Virolainen
 
-;; Author: Tuomo Virolainen <tvirolai @ soittakaaparanoid.mail.kapsi.fi>
+;; Author: Tuomo Virolainen <tvirolai@soittakaaparanoid.mail.kapsi.fi>
 
 ;; URL: https://github.com/tvirolai/quotient
 ;; Keywords: lisp
 ;; Version: 0.1
-;; Package-Requires: ((scratch-message "20220209.2207"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -57,7 +56,7 @@
      (point-max))))
 
 (defun quotient-read-corpus (corpus)
-  "Read the CORPUS into memory, split into rows."
+  "Read CORPUS file, return a list of rows."
   (let ((corpus-file-expanded (expand-file-name corpus user-emacs-directory)))
     (if (file-exists-p corpus-file-expanded)
         (split-string
