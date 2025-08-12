@@ -20,12 +20,42 @@ Installation from MELPA (TODO!). An example using the =use-package= method:
 
 ** Usage
 
-Quotient exposes three interactive functions:
+Quotient exposes two interactive functions:
 
 | Function                           | Description                                            |
 |------------------------------------+--------------------------------------------------------|
 | =quotient-display-random-quote=      | Display a quote in the minibuffer.                     |
 | =quotient-set-scratch-message=       | Generate a new quote and set it to the *scratch* buffer. |
-| =quotient-set-eshell-banner-message= | Generate a new quote and set it to the eshell banner.  |
 
 There is also =quotient-generate-quote= which generates and returns a quote, in case you want to do this programmatically.
+
+Example uses:
+
+#+begin_src elisp
+(quotient-generate-quote 'eshell)
+=>
+"I something fear my father's wrath, but nothing-
+Always reserv'd my holy duty- what
+His rage can do on me. You must be gone;
+And I shall here abide the hourly shot
+
+"
+#+end_src
+
+#+begin_src elisp
+(quotient-generate-quote 'comment)
+=>
+";; We fought the world
+;; Kings of metal to be
+;; Louder than hell
+;; Warriors of the world"
+#+end_src
+
+#+begin_src elisp
+(quotient-generate-quote)
+=>
+"I'm here to be paid for the pact that was made
+My payment can never be late
+Crack the Earth, Gods of Thunder
+Man and beast will be torn asunder"
+#+end_src
