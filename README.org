@@ -27,35 +27,33 @@ Quotient exposes two interactive functions:
 | =quotient-display-random-quote=      | Display a quote in the minibuffer.                     |
 | =quotient-set-scratch-message=       | Generate a new quote and set it to the *scratch* buffer. |
 
-There is also =quotient-generate-quote= which generates and returns a quote, in case you want to do this programmatically.
+There is also =quotient-generate-quote= which generates and returns a quote, in case you want to do this programmatically. It accepts an optional argument for formatting the quote:
+- ='comment=: prefix each line with a double semicolon and a space (=;;=)
+- ='eshell=: add two line breaks at the end to make some space between a quote and the shell row
 
-Example uses:
+** An example configuration
 
-#+begin_src elisp
-(quotient-generate-quote 'eshell)
-=>
-"I something fear my father's wrath, but nothing-
-Always reserv'd my holy duty- what
-His rage can do on me. You must be gone;
-And I shall here abide the hourly shot
+*** Installation using [[https://github.com/radian-software/straight.el][straight.el]].
 
-"
+#+begin_src emacs-lisp :tangle yes
+(straight-use-package 'use-package)
+
+(use-package quotient
+  :ensure t
+  :straight (quotient :type git :host github :repo "tvirolai/quotient")
+  :hook ((after-init . (lambda ()
+                         (setq initial-scratch-message (quotient-generate-quote 'comment)))))
+  :bind (("C-c §" . quotient-set-scratch-message)) ;; Manually reset the scratch message
+  :custom
+  (quotient-corpus "etc/corpus.txt") ;; This needs to be under your Emacs directory.
+  (quotient-quote-length 4)) ;; The default)
+
+(use-package eshell
+  :after quotient
+  :init
+  (setq eshell-banner-message (quotient-generate-quote 'eshell)))
 #+end_src
 
-#+begin_src elisp
-(quotient-generate-quote 'comment)
-=>
-";; We fought the world
-;; Kings of metal to be
-;; Louder than hell
-;; Warriors of the world"
-#+end_src
+*** Installation from MELPA
 
-#+begin_src elisp
-(quotient-generate-quote)
-=>
-"I'm here to be paid for the pact that was made
-My payment can never be late
-Crack the Earth, Gods of Thunder
-Man and beast will be torn asunder"
-#+end_src
+Coming soon.
