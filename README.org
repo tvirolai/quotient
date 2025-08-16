@@ -2,6 +2,9 @@
 
 Quotient is a small package that generates random quotes from a corpus file and sets them on the top of the scratch buffer, as the eshell banner or just displays them in the minibuffer.
 
+#+ATTR_HTML: :align center :width 500px
+[[./demo.gif]]
+
 ** Usage
 
 Quotient exposes two interactive functions:
