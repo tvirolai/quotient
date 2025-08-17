@@ -50,8 +50,6 @@
 
 (defvar quotient-scratch-buffer-name "*scratch*")
 
-(setq next-line-add-newlines t)
-
 (defun quotient-slurp (file)
   "Read the contents of FILE."
   (with-temp-buffer
@@ -77,7 +75,7 @@
                       (string-match-p "^\\(?:0\\|[1-9][0-9]*\\)" x))
                     res)
         (quotient-get-quote rows)
-      (mapconcat 'string-trim-left res "\n"))))
+      (mapconcat #'string-trim-left res "\n"))))
 
 ;;;###autoload
 (defun quotient-generate-quote (&optional format)
@@ -105,19 +103,22 @@ Optional argument FORMAT can be `comment' (commented out with semicolons) or
   (when (get-buffer quotient-scratch-buffer-name)
     (with-current-buffer quotient-scratch-buffer-name
       (goto-char (point-min))
-      (let ((quote-char (cond ((eq major-mode 'lisp-interaction-mode) (string-to-char ";"))
-                              ((eq major-mode 'org-mode) ?#)
-                              (t ?/))))
+      (let ((quote-char (cond ((derived-mode-p 'lisp-interaction-mode) (string-to-char ";"))
+                              ((derived-mode-p 'org-mode) ?#)
+                              (t ?/)))
+            (next-line-add-newlines-orig-val next-line-add-newlines))
+        (setq next-line-add-newlines t)
         (while (eq quote-char (char-after))
           (forward-line))
-        (delete-region (point-min) (point))))))
+        (delete-region (point-min) (point))
+        (setq next-line-add-newlines next-line-add-newlines-orig-val)))))
 
 (defun quotient-scratch-message-insert (quote)
   "Insert QUOTE into the top of the scratch buffer."
   (when (get-buffer quotient-scratch-buffer-name)
     (with-current-buffer quotient-scratch-buffer-name
       (goto-char (point-min))
-      (insert (concat quote "\n"))
+      (insert quote "\n")
       (goto-char (point-min))
       (forward-line quotient-quote-length)
       (comment-region (point-min) (point)))))
