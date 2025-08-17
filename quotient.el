@@ -1,4 +1,4 @@
-;;; quotient.el --- A library for generating random quotes using a text corpus. -*- lexical-binding: t -*-
+;;; quotient.el --- A library for generating random quotes using a text corpus -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2025 Tuomo Virolainen
 
@@ -6,6 +6,7 @@
 
 ;; URL: https://github.com/tvirolai/quotient
 ;; Keywords: lisp
+;; Package-Requires: ((emacs "25.1") (compat "30.1.0.1"))
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -22,8 +23,12 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;; Quotient is a small helper library for generating and displaying quotes
+;; using a corpus file as the source.
 
 ;;; Code:
+
+(require 'compat)
 
 (defgroup quotient ()
   "Settings for Quotient."
@@ -43,7 +48,7 @@
 
 ;; Code
 
-(defvar scratch-buffer-name "*scratch*")
+(defvar quotient-scratch-buffer-name "*scratch*")
 
 (setq next-line-add-newlines t)
 
@@ -97,10 +102,10 @@ Optional argument FORMAT can be `comment' (commented out with semicolons) or
 
 (defun quotient-wipe-scratch-message ()
   "Remove existing scratch message, if any."
-  (when (get-buffer scratch-buffer-name)
-    (with-current-buffer scratch-buffer-name
+  (when (get-buffer quotient-scratch-buffer-name)
+    (with-current-buffer quotient-scratch-buffer-name
       (goto-char (point-min))
-      (let ((quote-char (cond ((eq major-mode 'lisp-interaction-mode) (char-from-name "SEMICOLON"))
+      (let ((quote-char (cond ((eq major-mode 'lisp-interaction-mode) (string-to-char ";"))
                               ((eq major-mode 'org-mode) ?#)
                               (t ?/))))
         (while (eq quote-char (char-after))
@@ -109,8 +114,8 @@ Optional argument FORMAT can be `comment' (commented out with semicolons) or
 
 (defun quotient-scratch-message-insert (quote)
   "Insert QUOTE into the top of the scratch buffer."
-  (when (get-buffer scratch-buffer-name)
-    (with-current-buffer scratch-buffer-name
+  (when (get-buffer quotient-scratch-buffer-name)
+    (with-current-buffer quotient-scratch-buffer-name
       (goto-char (point-min))
       (insert (concat quote "\n"))
       (goto-char (point-min))
