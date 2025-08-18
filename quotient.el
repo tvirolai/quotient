@@ -46,9 +46,12 @@
   :type 'number
   :group 'quotient)
 
-;; Code
+(defcustom quotient-scratch-buffer-name "*scratch*"
+  "The name of the scratch buffer."
+  :type 'string
+  :group 'quotient)
 
-(defvar quotient-scratch-buffer-name "*scratch*")
+;; Code
 
 (defun quotient-slurp (file)
   "Read the contents of FILE."
@@ -113,12 +116,12 @@ Optional argument FORMAT can be `comment' (commented out with semicolons) or
         (delete-region (point-min) (point))
         (setq next-line-add-newlines next-line-add-newlines-orig-val)))))
 
-(defun quotient-scratch-message-insert (quote)
-  "Insert QUOTE into the top of the scratch buffer."
+(defun quotient-scratch-message-insert (quote-text)
+  "Insert QUOTE-TEXT into the top of the scratch buffer."
   (when (get-buffer quotient-scratch-buffer-name)
     (with-current-buffer quotient-scratch-buffer-name
       (goto-char (point-min))
-      (insert quote "\n")
+      (insert quote-text "\n")
       (goto-char (point-min))
       (forward-line quotient-quote-length)
       (comment-region (point-min) (point)))))
@@ -128,9 +131,8 @@ Optional argument FORMAT can be `comment' (commented out with semicolons) or
   "Generate a new quote and set it to the *scratch* buffer."
   (interactive)
   (save-excursion
-    (let ((quote (quotient-generate-quote)))
-      (quotient-wipe-scratch-message)
-      (quotient-scratch-message-insert quote))))
+    (quotient-wipe-scratch-message)
+    (quotient-scratch-message-insert (quotient-generate-quote))))
 
 (provide 'quotient)
 
