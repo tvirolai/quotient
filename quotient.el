@@ -93,7 +93,7 @@ Optional argument FORMAT can be `comment' (commented out with semicolons) or
                   ((eq format 'eshell) (concat quote "\n\n"))
                   (t quote))
           quote))
-    (message "Corpus file not found.")))
+    (message "Corpus file not configured.")))
 
 ;;;###autoload
 (defun quotient-display-random-quote ()
