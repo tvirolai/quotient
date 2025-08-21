@@ -86,13 +86,16 @@
 Optional argument FORMAT can be `comment' (commented out with semicolons) or
 `eshell' (with two line breaks added)."
   (if quotient-corpus
-      (let* ((rows (quotient-read-corpus quotient-corpus))
-             (quote (quotient-get-quote rows)))
-        (if format
-            (cond ((eq format 'comment) (concat  ";; " (string-replace "\n" "\n;; " quote)))
-                  ((eq format 'eshell) (concat quote "\n\n"))
-                  (t quote))
-          quote))
+      (let ((rows (quotient-read-corpus quotient-corpus)))
+        (if (>= (length rows)
+                quotient-quote-length)
+            (let ((quote (quotient-get-quote rows)))
+              (if format
+                  (cond ((eq format 'comment) (concat  ";; " (string-replace "\n" "\n;; " quote)))
+                        ((eq format 'eshell) (concat quote "\n\n"))
+                        (t quote))
+                quote))
+          (message "Corpus file contains less rows than desired quote length.")))
     (message "Corpus file not configured.")))
 
 ;;;###autoload
