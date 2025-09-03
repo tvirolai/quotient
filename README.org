@@ -32,7 +32,7 @@ There is also =quotient-generate-quote= which generates and returns a quote, in 
                          (setq initial-scratch-message (quotient-generate-quote 'comment)))))
   :bind (("C-c §" . quotient-set-scratch-message)) ;; Manually reset the scratch message
   :custom
-  (quotient-corpus "etc/corpus.txt") ;; This needs to be under your Emacs directory.
+  (quotient-corpus "~/Desktop/corpus.txt")
   (quotient-quote-length 4)) ;; The default)
 
 (use-package eshell

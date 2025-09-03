@@ -63,10 +63,10 @@
 
 (defun quotient-read-corpus (corpus)
   "Read CORPUS file, return a list of rows."
-  (let ((corpus-file-expanded (expand-file-name corpus user-emacs-directory)))
+  (let ((corpus-file-expanded (expand-file-name corpus)))
     (if (file-exists-p corpus-file-expanded)
         (split-string
-         (quotient-slurp corpus-file-expanded) "\n" t)
+         (quotient--slurp corpus-file-expanded) "\n" t)
       (message "Corpus file not found."))))
 
 (defun quotient-get-quote (rows)
