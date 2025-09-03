@@ -53,7 +53,7 @@
 
 ;; Code
 
-(defun quotient-slurp (file)
+(defun quotient--slurp (file)
   "Read the contents of FILE."
   (with-temp-buffer
     (insert-file-contents file)
