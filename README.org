@@ -31,7 +31,7 @@ There is also =quotient-generate-excerpt= which generates and returns a quote, i
   :ensure t
   :straight (quotient :type git :host github :repo "tvirolai/quotient")
   :hook ((after-init . (lambda ()
-                         (setq initial-scratch-message (quotient-generate-quote 'comment)))))
+                         (setq initial-scratch-message (quotient-generate-excerpt 'comment)))))
   :bind (("C-c §" . quotient-set-scratch-message)) ;; Manually reset the scratch message
   :custom
   (quotient-corpus "~/Desktop/corpus.txt")
@@ -40,7 +40,7 @@ There is also =quotient-generate-excerpt= which generates and returns a quote, i
 (use-package eshell
   :after quotient
   :init
-  (setq eshell-banner-message (quotient-generate-quote 'eshell)))
+  (setq eshell-banner-message (quotient-generate-excerpt 'eshell)))
 #+end_src
 
 *** Installation from MELPA
