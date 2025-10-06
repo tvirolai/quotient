@@ -16,7 +16,7 @@ Quotient exposes two interactive functions:
 | =quotient-display-random-excerpt= | Display a quote in the minibuffer.                     |
 | =quotient-set-scratch-message=    | Generate a new quote and set it to the *scratch* buffer. |
 
-There is also =quotient-generate-quote= which generates and returns a quote, in case you want to do this programmatically. It accepts an optional argument for formatting the quote:
+There is also =quotient-generate-excerpt= which generates and returns a quote, in case you want to do this programmatically. It accepts an optional argument for formatting the quote:
 - ='comment=: prefix each line with a double semicolon and a space (=;;=)
 - ='eshell=: add two line breaks at the end to make some space between a quote and the shell row
 
