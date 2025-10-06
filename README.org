@@ -1,6 +1,8 @@
 * Quotient
 
-Quotient is a small package that generates random quotes from a corpus file and sets them on the top of the scratch buffer, as the eshell banner or just displays them in the minibuffer.
+Quotient is a small package that generates random quotes (excepts) from a corpus file and sets them on the top of the scratch buffer, as the eshell banner or just displays them in the minibuffer.
+
+The corpus file can be any plain text file you like: think song lyrics, poetry, literature, screenplays, Wikipedia dump, etc. Quotient will the quote it by taking random excerpts from it and displaying them inside Emacs. The content does not need to be structured in any particular way: Quotient takes a random sample of rows (blank lines are ignored) with the length you can define (see below).
 
 #+ATTR_HTML: :align center :width 500px
 [[./demo.gif]]
@@ -9,10 +11,10 @@ Quotient is a small package that generates random quotes from a corpus file and 
 
 Quotient exposes two interactive functions:
 
-| Function                           | Description                                            |
-|------------------------------------+--------------------------------------------------------|
-| =quotient-display-random-quote=      | Display a quote in the minibuffer.                     |
-| =quotient-set-scratch-message=       | Generate a new quote and set it to the *scratch* buffer. |
+| Function                        | Description                                            |
+|---------------------------------+--------------------------------------------------------|
+| =quotient-display-random-excerpt= | Display a quote in the minibuffer.                     |
+| =quotient-set-scratch-message=    | Generate a new quote and set it to the *scratch* buffer. |
 
 There is also =quotient-generate-quote= which generates and returns a quote, in case you want to do this programmatically. It accepts an optional argument for formatting the quote:
 - ='comment=: prefix each line with a double semicolon and a space (=;;=)
@@ -33,7 +35,7 @@ There is also =quotient-generate-quote= which generates and returns a quote, in 
   :bind (("C-c §" . quotient-set-scratch-message)) ;; Manually reset the scratch message
   :custom
   (quotient-corpus "~/Desktop/corpus.txt")
-  (quotient-quote-length 4)) ;; The default)
+  (quotient-excerpt-length 4)) ;; The default)
 
 (use-package eshell
   :after quotient
