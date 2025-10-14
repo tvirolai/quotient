@@ -1,5 +1,7 @@
 * Quotient
 
+[[https://melpa.org/#/quotient][file:https://melpa.org/packages/quotient-badge.svg]]
+
 Quotient is a small package that generates random quotes (excepts) from a corpus file and sets them on the top of the scratch buffer, as the eshell banner or just displays them in the minibuffer.
 
 The corpus file can be any plain text file you like: think song lyrics, poetry, literature, screenplays, Wikipedia dump, etc. Quotient will quote it by taking random excerpts from it and displaying them inside Emacs. The content does not need to be structured in any particular way: Quotient takes a random sample of rows (blank lines are ignored) with the length you can define (see below).
