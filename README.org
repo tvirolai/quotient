@@ -2,7 +2,7 @@
 
 Quotient is a small package that generates random quotes (excepts) from a corpus file and sets them on the top of the scratch buffer, as the eshell banner or just displays them in the minibuffer.
 
-The corpus file can be any plain text file you like: think song lyrics, poetry, literature, screenplays, Wikipedia dump, etc. Quotient will the quote it by taking random excerpts from it and displaying them inside Emacs. The content does not need to be structured in any particular way: Quotient takes a random sample of rows (blank lines are ignored) with the length you can define (see below).
+The corpus file can be any plain text file you like: think song lyrics, poetry, literature, screenplays, Wikipedia dump, etc. Quotient will quote it by taking random excerpts from it and displaying them inside Emacs. The content does not need to be structured in any particular way: Quotient takes a random sample of rows (blank lines are ignored) with the length you can define (see below).
 
 #+ATTR_HTML: :align center :width 500px
 [[./demo.gif]]
@@ -35,7 +35,7 @@ There is also =quotient-generate-excerpt= which generates and returns a quote, i
   :bind (("C-c §" . quotient-set-scratch-message)) ;; Manually reset the scratch message
   :custom
   (quotient-corpus "~/Desktop/corpus.txt")
-  (quotient-excerpt-length 4)) ;; The default)
+  (quotient-excerpt-length 4)) ;; The default, only needs to be set if you want something else.
 
 (use-package eshell
   :after quotient
@@ -45,4 +45,19 @@ There is also =quotient-generate-excerpt= which generates and returns a quote, i
 
 *** Installation from MELPA
 
-Coming soon.
+Installation from MELPA works the same way.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package quotient
+  :ensure t
+  :hook ((after-init . (lambda ()
+                         (setq initial-scratch-message (quotient-generate-excerpt 'comment)))))
+  :bind (("C-c §" . quotient-set-scratch-message)) ;; Manually reset the scratch message
+  :custom
+  (quotient-corpus "~/Desktop/corpus.txt"))
+
+(use-package eshell
+  :after quotient
+  :init
+  (setq eshell-banner-message (quotient-generate-excerpt 'eshell)))
+#+end_src
